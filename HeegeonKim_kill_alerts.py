@@ -206,4 +206,67 @@ def checkandalert(limit=80.0):
         return False, current
 
 
+def main():
+    """main function to test all the features"""
+
+    print("=" * 60)
+    print("process management system")
+    print("=" * 60)
+
+    #1. show memory
+
+    print("\n1. memory status:")
+    memoryusage = getmemoryusage()
+    print(f" current usage: {memoryusage}%")
+
+
+    #2. check threshold
+
+    print("\n2. threshold check (80%):")
+    isover, current = checkthreshold(80.0)
+    print(f"  over threshold: {is_over}")
+
+
+    #3. list processes
+
+    print("\n3, top processes by memory:")
+    allprocesses = getprocesslist()
+    topprocesses = sortbymemory(allprocesses, 3)
+
+    for i, process in enumerate(topprocesses, 1):
+        print(f"  {i}. PID {process['pid']} - {process['cmd'][:30]} ({proc['mem']}%)")
+
+
+    #4. alert test
+
+    print("\n4. alert system test:")
+    alerttrigger, memoryvalue = checkandalert(90.0)
+    print(f" alert triggered: {alerttrigger}")
+
+
+    #5. kill test
+
+    print("\n5. kill process test:")
+    print("testing with invalid PID 9999999:")
+    success, message = killpid(9999999)
+    print(f" result: {success} - {message}")
+
+    # show menu
+
+    print("\n available functions:")
+    print(" getmemoryusage() - returns current memory %")
+    print(" checkthreshold(limit) - checks against limit")
+    print(" getprocesslist() - returns all processes")
+    print(" sortbymemory(process, n) - sorts by memory")
+    print(" killpid(pid, force) - kills process")
+    print(" checkand alert(limit) - checks and alerts")
+    print("=" * 60)
+
+#main block
+
+if __name__ == '__main__':
+    main()
+
+
+
 
