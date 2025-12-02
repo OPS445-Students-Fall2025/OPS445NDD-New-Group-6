@@ -49,8 +49,8 @@ def getmemoryusage():
     
     memorydata = readmemoryinfo()
 
-    total = memorydata.get('totalmemory', 0)
-    available = memorydata.get('memoryavailable', 0)
+    total = memorydata.get('MemTotal', 0)
+    available = memorydata.get('MemAvailable', 0)
 
     if total == 0:
         print("Could not get total memory")
@@ -137,18 +137,18 @@ def killpid(pid, forcekill=False):
     """ kill process by PID and simple error checking """
 
     #validation
-    if not isinsistance(pid, int):
+    if not isinstance(pid, int):
         return False, "PID must be an integer"
 
     if pid <= 0:
-        return Flase, "PID must be positive"
+        return False, "PID must be positive"
 
     #check if process exists 
     if not os.path.exists(f'/proc/{pid}'):
         return False, f"Process {pid} does not exist"
 
     #making sure not to kill important processes
-    if pid < 100:
+    if pid < 10:
         return False, f"PID {pid} is a system process"
 
     #don't kill this process itself
@@ -158,7 +158,7 @@ def killpid(pid, forcekill=False):
     #force kill
     if forcekill:
         os.kill(pid, signal.SIGKILL)
-        return True, f"FOrce killed process {pid}"
+        return True, f"Force killed process {pid}"
 
     else:
         os.kill(pid, signal.SIGTERM)
@@ -224,7 +224,7 @@ def main():
 
     print("\n2. threshold check (80%):")
     isover, current = checkthreshold(80.0)
-    print(f"  over threshold: {is_over}")
+    print(f"  over threshold: {isover}")
 
 
     #3. list processes
@@ -234,7 +234,7 @@ def main():
     topprocesses = sortbymemory(allprocesses, 3)
 
     for i, process in enumerate(topprocesses, 1):
-        print(f"  {i}. PID {process['pid']} - {process['cmd'][:30]} ({proc['mem']}%)")
+        print(f"  {i}. PID {process['pid']} - {process['cmd'][:30]} ({process['mem']}%)")
 
 
     #4. alert test
@@ -259,7 +259,7 @@ def main():
     print(" getprocesslist() - returns all processes")
     print(" sortbymemory(process, n) - sorts by memory")
     print(" killpid(pid, force) - kills process")
-    print(" checkand alert(limit) - checks and alerts")
+    print(" checkandalert(limit) - checks and alerts")
     print("=" * 60)
 
 #main block
