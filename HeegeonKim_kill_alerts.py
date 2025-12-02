@@ -18,3 +18,28 @@ def readmemoryinfo():
 
     memorydata = {}
 
+    #checking if the file exists first
+    if os.path.exists('/proc/meminfo'):
+        fileobject = open('/proc/meminfo', 'r')
+        content = fileobject.read()
+        fileobject.close()
+
+        lines = content.split('\n')
+        for line in lines:
+            if ':' in line:
+                parts = line.split(':')
+                key = parts[0].strip()
+                valuepart = parts[1].strip()
+
+                #just getting the number value 
+                numbers = []
+                for word in valuepart.split():
+                    if word.isdigit():
+                        numbers.append(word)
+
+                if numbers:
+                    memorydata[key] = int(numbers[0])
+    else:
+        print("/proc/meminfo was not found")
+
+    return memorydata
