@@ -87,7 +87,7 @@ def getprocesslist():
 
     # run ps command
     cmd = ['ps', 'aux']
-    result = subprocess.run(cmd, captureoutput=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode == 0:
         lines = result.stdout.split('\n')
@@ -229,7 +229,7 @@ def main():
 
     #3. list processes
 
-    print("\n3, top processes by memory:")
+    print("\n3. top processes by memory:")
     allprocesses = getprocesslist()
     topprocesses = sortbymemory(allprocesses, 3)
 
