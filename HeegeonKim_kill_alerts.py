@@ -78,3 +78,56 @@ def checkthreshold(limit):
         
         print(f"memory at {current}% (limit: {limit}%)")
         return False, current
+
+
+def getprocesslist():
+    """get list of process using ps command"""
+
+    processes = []
+
+    # run ps command
+    cmd = ['ps', 'aux']
+    result = subprocess.run(cmd, captureoutput=True, text=True)
+
+    if result.returncode == 0:
+        lines = result.stdout.split('\n')
+
+        #skip header
+        for line in lines[1:]:
+            if line.strip():
+                parts = line.split(maxsplit=10)
+                if len(parts) >= 11:
+                    processinfo = {
+                            'user': parts[0],
+                            'pid': int(parts[1]),
+                            'cpu': float(parts[2]),
+                            'mem': float(parts[3]),
+                            'cmd': parts[10]
+                    }
+                    processes.append(processinfo)
+
+    else:
+        print("error running ps command")
+
+    return processes
+
+def sortbymemory(processes, count=5):
+    """ sort processes by memory usage"""
+
+    if not processes:
+        return []
+
+    #create a copy to sort
+    sortedlist = processes[:]
+
+    #simple bubble sort 
+    for i in range(len(sortedlist)):
+        for j in range(len(sortedlist)-1):
+            if sortedlist[j]['mem'] < sortedlist[j+1]['mem']:
+
+                #swap
+                temp = sortedlist[j]
+                sortedlist[j] = sortedlist[j+1]
+                sortedlist[j+1] = temp
+
+    return sortedlist[:count]
