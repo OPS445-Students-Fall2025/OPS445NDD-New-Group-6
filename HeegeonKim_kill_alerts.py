@@ -131,3 +131,38 @@ def sortbymemory(processes, count=5):
                 sortedlist[j+1] = temp
 
     return sortedlist[:count]
+
+
+def killpid(pid, forcekill=False):
+    """ kill process by PID and simple error checking """
+
+    #validation
+    if not isinsistance(pid, int):
+        return False, "PID must be an integer"
+
+    if pid <= 0:
+        return Flase, "PID must be positive"
+
+    #check if process exists 
+    if not os.path.exists(f'/proc/{pid}'):
+        return False, f"Process {pid} does not exist"
+
+    #making sure not to kill important processes
+    if pid < 100:
+        return False, f"PID {pid} is a system process"
+
+    #don't kill this process itself
+    if pid == os.getpid():
+        return False, "Cannot kill this current process"
+
+    #force kill
+    if forcekill:
+        os.kill(pid, signal.SIGKILL)
+        return True, f"FOrce killed process {pid}"
+
+    else:
+        os.kill(pid, signal.SIGTERM)
+        return True, f"Sent termination to process {pid}"
+
+
+
