@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# Author: Mikal Dixon
+
 import psutil
 import time
 import os
@@ -117,17 +121,15 @@ def kill_process():
     input("Press Enter to continue...")
 
 def main():
+  """Prevents no memory error, AttributeError"""
     global ALERT_THRESHOLD
     while True:
         clear_screen()
-        
-        # Gather process data first
         processes = sorted(
-            [p for p in psutil.process_iter(['pid', 'name', 'memory_info', 'exe'])],
-            key=lambda p: p.info['memory_info'].rss, 
+            psutil.process_iter(['pid', 'name', 'memory_info', 'exe']),
+            key=lambda p: p.info['memory_info'].rss if p.info['memory_info'] else 0,
             reverse=True
         )
-        
         top_proc_data = None
         if processes:
             top_proc_data = {
