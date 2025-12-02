@@ -165,4 +165,45 @@ def killpid(pid, forcekill=False):
         return True, f"Sent termination to process {pid}"
 
 
+#global variables for alerts
+alertcount = 0
+lastalerttime = None
+
+def showalert(message, alerttype="INFO"):
+    """ simple alert function"""
+
+    global alertcount, lastalerttime
+
+    #timestamp
+    import time
+    timestamp = time.strftime("%H:%M:%S")
+
+    #format message
+    formatted = f"[{timestamp}] [{alerttype}] {message}"
+    print(formatted)
+
+    #log to file
+    logfile = open("memoryalerts.txt", "a")
+    logfile.write(formatted + "\n")
+    logfile.close()
+
+    #update counters
+    alertcount += 1
+    lastalerttime = timestamp
+
+    return True
+
+def checkandalert(limit=80.0):
+    """check memory and show alert if needed"""
+
+    current = getmemoryusage()
+
+    if current > limit:
+        showalert(f"Memory at {current}% exceeds {limit}%", "warning")
+        return True, current
+    else:
+        showalert(f"Memory at {current}% is OK", "info")
+        return False, current
+
+
 
